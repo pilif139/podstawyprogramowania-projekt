@@ -36,7 +36,7 @@ void loading()
     cout << "Obrona znajduje sie pod przyciskiem D!\n";
     cout << endl;
     cout << "Ladowanie gry";
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
         cout << ".";
         Sleep(1000);
@@ -581,12 +581,13 @@ int menu()
                 return 0;
             case '2':
             {
+                load_save();
                 if(isFirstTimePlaying==1)
                 {
                     load_save();
                     gra();
                 }
-                else {
+                else if(isFirstTimePlaying==0) {
                     cout << "Nie masz jeszcze zadnego save'u!";
                     Sleep(1500);
                 }
