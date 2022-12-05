@@ -6,7 +6,4 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(projekt_pp
-        main1.3.cpp
-        fight_functions.h
-        fight_functions.cpp
-        )
+        main.cpp)

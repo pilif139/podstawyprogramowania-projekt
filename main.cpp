@@ -1,18 +1,17 @@
 #include <iostream>
-#include <stdio.h>
 #include <cstdlib>
 #include <conio.h>
 #include <windows.h>
 #include <fstream>
 #include <time.h>
 
-#include "fight_functions.h"
-
 using namespace std;
 
+string nickname;
 int sekret = 0;
 int maks1=0;
 int maks2=0;
+int HavelArmorOnOrNot=0;
 long long lvl = 1;
 long long gold = 0;
 long long hp;
@@ -22,12 +21,14 @@ long long monster_actual_hp;
 long long actual_hp;
 long long dmg = 100;
 long long monster_dmg;
+int blokDmg;
+int isFirstTimePlaying=0;
 string Monster[10] = {"Ork", "Troll", "Pudzianowski", "Pirat", "Dres", "Brajanek", "Karen", "Dudy Rick", "Kanye East", "Informatyk"};
 
 void loading()
 {
     system("cls");
-    cout << "Witaj Gladiatorze!\n"
+    cout << "Witaj Gladiatorze "<<nickname<<"!\n"
          << endl;
     Sleep(2000);
     cout << "Rada:\n";
@@ -49,6 +50,11 @@ int save()
     myfile << gold << endl;
     myfile << dmg << endl;
     myfile << sekret << endl;
+    myfile << maks1 <<endl;
+    myfile << maks2 <<endl;
+    myfile << nickname <<endl;
+    myfile <<HavelArmorOnOrNot <<endl;
+    myfile <<isFirstTimePlaying<<endl;
     myfile.close();
 
     return 0;
@@ -61,8 +67,8 @@ int load_save()
     fstream plik;
     plik.open("save.txt", ios::in);
 
-    if (plik.good() == false)
-        cout << "nie mozna otworzyc pliku!";
+    if (!plik.good())
+        cout << "Brak save'u!";
     while (getline(plik, linia))
     {
         switch (nr_linii)
@@ -79,6 +85,21 @@ int load_save()
             case 4:
                 sekret = atoi(linia.c_str());
                 break;
+            case 5:
+                maks1=atoi(linia.c_str());
+                break;
+            case 6:
+                maks2=atoi(linia.c_str());
+                break;
+            case 7:
+                nickname = linia;
+                break;
+            case 8:
+                HavelArmorOnOrNot=atoi(linia.c_str());
+                break;
+            case 9:
+                isFirstTimePlaying=atoi(linia.c_str());
+                break;
         }
 
         nr_linii++;
@@ -91,19 +112,19 @@ int alchemic_shop() // do zrobienia
 {
     return 0;
 }
-int cult() // do zrobienia, ten kult to jaki� black market rozumiem
+int cult() // do zrobienia, ten kult to jakis black market rozumiem
 {
     char numerek2;
     while(numerek2!=3){
         system("cls");
-        if (sekret != 1)
+        if (sekret == 0)
         {
             cout << "Menel: Kim ty jestes?" << endl;
             cout << "Menel: Zimno nam, nie potrzebujemy cie w naszym skladzie" << endl;
             Sleep(2000);
             return 0;
         }
-        else
+        else if(sekret==1)
         {
             system("cls");
             cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
@@ -123,7 +144,7 @@ int cult() // do zrobienia, ten kult to jaki� black market rozumiem
             {
                 case '1':
                 {
-                    if(maks1!=1)
+                    if(maks1==0)
                     {
                         if(gold <= 150)
                         {
@@ -141,7 +162,7 @@ int cult() // do zrobienia, ten kult to jaki� black market rozumiem
                             break;
                         }
                     }
-                    else{
+                    else if(maks1==1){
                         cout<<"HOG RIDER MA TYLKO JEDEN MLOT!!!";
                         Sleep(1500);
                         break;
@@ -149,30 +170,29 @@ int cult() // do zrobienia, ten kult to jaki� black market rozumiem
                 }
                 case '2':
                 {
-                    if(maks2!=1)
+                    if(maks2==0)
                     {
-                        if (gold <= 200)
-                        {
+                        if (gold <= 200) {
                             cout << "Ale ze ty chcesz zebrac od zebraka?!?!" << endl;
                             Sleep(2000);
                             break;
-                        }
-                        else if (gold >= 200)
-                        {
-                            cout << "kupiles Magiczny Poison Mirka, wykonany jest po harnasu, kosztowalo cie to 200 golda" << endl;
+                        } else if (gold >= 200) {
+                            cout
+                                    << "kupiles Magiczny Poison Mirka, wykonany jest po harnasu, kosztowalo cie to 200 golda"
+                                    << endl;
                             gold = gold - 200;
                             dmg = dmg * 2;
-                            maks2=1;
+                            maks2 = 1;
                             Sleep(2000);
                             break;
                         }
-                        else{
+                    }
+                    else if(maks2==1){
                             cout<<"Nasz mirek juz nie produkuje takich ustrojstw! ";
                             Sleep(1500);
                             break;
                         }
                     }
-                }
                 case '3':
                 {
                     cout << "Wychodzisz z kultu!";
@@ -184,7 +204,6 @@ int cult() // do zrobienia, ten kult to jaki� black market rozumiem
                     cout << "Jeremiaszu, to nie u nas";
                     Sleep(2000);
                     break;
-                    cult();
                 }
             }
         }
@@ -193,7 +212,7 @@ int cult() // do zrobienia, ten kult to jaki� black market rozumiem
 void hp_bar(int monster_hp, int act_hp, int b)
 {
     system("cls");
-    cout << "HP: [";
+    cout <<nickname<<" HP: [";
     for (int i = 0; i < act_hp / 10; i++)
     {
         cout << "|";
@@ -212,7 +231,16 @@ void atak_potwora(int mdmg, char ruch, int a)
     cout << ruch;
     if (ruch == 'd' || ruch == 'D')
     {
-        actual_hp = actual_hp - mdmg * 0.6;
+        if(HavelArmorOnOrNot==0)
+        {
+            blokDmg=mdmg*0.6;
+            actual_hp = actual_hp - blokDmg;
+        }
+        else if(HavelArmorOnOrNot==1)
+        {
+            blokDmg=mdmg*0.1;
+            actual_hp = actual_hp - blokDmg;
+        }
         hp_bar(monster_actual_hp, actual_hp, a);
         cout << "BLOK!";
         Sleep(2000);
@@ -250,7 +278,7 @@ void fight(int c)
         {
             atak_potwora(monster_dmg, ruch, c);
         }
-    } while (monster_actual_hp >= 0 && actual_hp >= 0);
+    } while (monster_actual_hp > 0 && actual_hp > 0);
 
     if (monster_actual_hp <= 0)
     {
@@ -279,7 +307,6 @@ int sword_shop()
     while (numerek != '6')
     {
         system("cls");
-        welcome_menu();
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
         cout << "	Witaj w Sklepie" << endl;
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
@@ -395,7 +422,6 @@ int sword_shop()
                 cout << "Nie ma takiej opji w naszym sklepie!";
                 Sleep(2000);
                 break;
-                sword_shop();
             }
         }
     }
@@ -405,8 +431,9 @@ int gra()
     char wybor;
     while (wybor != 5)
     {
+        save();
         system("cls");
-        cout << "lvl: " << lvl << "\t gold: " << gold << "\t"
+        cout <<"Gladiator: "<<nickname<< " \t lvl: " << lvl << "\t gold: " << gold << "\t"
              << "dmg: " << dmg << endl;
         cout << "Znajdujesz sie przed brama miasta! Gdzie chcesz sie udac?\n";
         cout << "1.KOLOSEUM\n";
@@ -447,7 +474,6 @@ int gra()
             {
                 system("color 8e");
                 sword_shop();
-                save();
                 system("color 70");
                 break;
             }
@@ -471,8 +497,55 @@ int gra()
             default:
             {
                 break;
-                gra();
             }
+        }
+    }
+}
+void CharacterCreate()
+{
+    system("cls");
+    cout<<endl<<"Jakie chcesz otrzymac atrybuty poczatkowe?\n";
+    cout<<"\t 1. 150 golda\n";
+    cout<<"\t 2. Topor Miasta Poczatkow \n";
+    cout<<"\t 3. Mityczny Denaturat Mirka Pierwszego \n";
+    cout<<"\t 4. Legendarna Zbroja Havela \n";
+    char wybor;
+    wybor=getch();
+    system("cls");
+    switch(wybor)
+    {
+        case '1':
+        {
+            cout<<"Jestes dzieckiem bogatych rodzicow tzw. bananem!";
+            gold=gold+150;
+            Sleep(1800);
+            break;
+        }
+        case '2':
+        {
+            cout<<"Otrzymujesz Topor Miasta Poczatkow";
+            dmg=dmg+20;
+            Sleep(1800);
+            break;
+        }
+        case '3':
+        {
+            cout<<"Otrzymujesz szacunek ludzi ulicy!";
+            sekret=1; //moze dodatkowy item w kulcie
+            Sleep(1800);
+            break;
+        }
+        case '4':
+        {
+            cout<<"Mityczna Zbroja Havla Przyodziewa twoje cialo!";
+            HavelArmorOnOrNot=1;
+            Sleep(1800);
+            break;
+        }
+        default:{
+            cout<<"Nie ma takiego atrybutu pocztkowego!";
+            Sleep(1800);
+            break;
         }
     }
 }
@@ -496,14 +569,28 @@ int menu()
         switch (wybor)
         {
             case '1':
+                system("cls");
+                isFirstTimePlaying=1;
+                cout<<"---MENU TWORZENIA POSTACI---\n";
+                cout<<"Nazwij swoja postac: ";
+                cin>>nickname;
+                CharacterCreate();
+                save();
                 loading();
                 gra();
                 return 0;
             case '2':
             {
-                load_save();
-                gra();
-                return 0;
+                if(isFirstTimePlaying==1)
+                {
+                    load_save();
+                    gra();
+                }
+                else {
+                    cout << "Nie masz jeszcze zadnego save'u!";
+                    Sleep(1500);
+                }
+                break;
             }
             case '3':
             {
@@ -531,7 +618,6 @@ int menu()
                 cout << "Nie ma takiej opcji w menu! ";
                 Sleep(1800);
                 break;
-                menu();
             }
         }
         system("cls");
