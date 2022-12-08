@@ -14,15 +14,14 @@ int maks2=0;
 int HavelArmorOnOrNot=0;
 long long lvl = 1;
 long long gold = 0;
-long long hp;
-long long monster_lvl;
-long long monster_hp;
-long long monster_actual_hp;
 long long actual_hp;
-long long dmg = 100;
-long long monster_dmg;
+int dmg = 100;
+long long hp;
 int blokDmg;
 int isFirstTimePlaying=0;
+string consumableItems[]={"Hp Potion","Throwing Dagger","Poison Bomb","Fire Bomb","Lighting powder"};
+const int consumableItemsSize= sizeof(consumableItems) / sizeof(consumableItems[0]);
+int consumableItemsAmount[consumableItemsSize]={1,1,1,1,1}; //ilosc itemow mozliwych do posiadania i uzycia
 string Monster[10] = {"Ork", "Troll", "Pudzianowski", "Pirat", "Dres", "Brajanek", "Karen", "Dudy Rick", "Kanye East", "Informatyk"};
 
 void loading()
@@ -55,6 +54,11 @@ int save()
     myfile << nickname <<endl;
     myfile <<HavelArmorOnOrNot <<endl;
     myfile <<isFirstTimePlaying<<endl;
+    myfile << consumableItemsAmount[0]<<endl;
+    myfile << consumableItemsAmount[1]<<endl;
+    myfile << consumableItemsAmount[2]<<endl;
+    myfile << consumableItemsAmount[3]<<endl;
+    myfile << consumableItemsAmount[4]<<endl;
     myfile.close();
 
     return 0;
@@ -100,6 +104,21 @@ int load_save()
             case 9:
                 isFirstTimePlaying=atoi(linia.c_str());
                 break;
+            case 10:
+                consumableItemsAmount[0]=atoi(linia.c_str());
+                break;
+            case 11:
+                consumableItemsAmount[1]=atoi(linia.c_str());
+                break;
+            case 12:
+                consumableItemsAmount[2]=atoi(linia.c_str());
+                break;
+            case 13:
+                consumableItemsAmount[3]=atoi(linia.c_str());
+                break;
+            case 14:
+                consumableItemsAmount[4]=atoi(linia.c_str());
+                break;
         }
 
         nr_linii++;
@@ -108,11 +127,58 @@ int load_save()
     plik.close();
     return 0;
 }
-int alchemic_shop() // do zrobienia
+int alchemic_shop()
 {
+    int consumableItemsPrice[consumableItemsSize]={25,11,37,52,78};
+    int Choice=0;
+    while(Choice!=6)
+    {
+        system("cls");
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        cout << "	Witaj w Sklepie Alchemicznym" << endl;
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        cout <<"Ilosc golda: "<<gold<<endl;
+        cout << "Nazwa:\t\t\t Cena:" << endl;
+        cout << "1.Health Potion \t 25 golda" << endl;
+        cout << "2.Throwing Dagger \t 11 golda" << endl;
+        cout << "3.Poison Bomb \t\t 37 golda" << endl;
+        cout << "4.Fire Bomb \t\t 52 golda" << endl;
+        cout << "5.Lighting Powder \t 78 golda\n"<<endl;
+        cout << "6.Wyjdz ze sklepu";
+        cout<<endl<<"Twoj wybor: ";
+        cin>>Choice;
+        system("cls");
+        if(Choice==1||Choice==2||Choice==3||Choice==4||Choice==5)
+        {
+            if(gold>=consumableItemsPrice[Choice-1])
+            {
+                consumableItemsAmount[Choice-1]+=1;
+                gold-=consumableItemsPrice[Choice-1];
+                cout<<"Zakupiles "<<consumableItems[Choice-1];
+                Sleep(1500);
+            }
+            else {
+                cout << "Nie stac cie na to!";
+                Sleep(1500);
+            }
+        }
+        else if(Choice==6) {
+            cout<<"Wychodzisz ze Sklepu Alchemicznego!";
+            Sleep(1000);
+            return 0;
+        }
+        else
+        {
+            cout<<"Wynocha z naszego sklepu!"; //nie bedzie bezkarnego bugowania gierki
+            Sleep(1500);
+            return 0;
+        }
+        system("cls");
+    }
+
     return 0;
-}
-int cult() // do zrobienia, ten kult to jakis black market rozumiem
+} //zbalansowac ceny do dmg'u
+int cult()
 {
     char numerek2;
     while(numerek2!=3){
@@ -209,6 +275,7 @@ int cult() // do zrobienia, ten kult to jakis black market rozumiem
         }
     }
 }
+
 void hp_bar(int monster_hp, int act_hp, int b)
 {
     system("cls");
@@ -217,16 +284,16 @@ void hp_bar(int monster_hp, int act_hp, int b)
     {
         cout << "|";
     }
-    cout << "]" << act_hp << endl;
+    cout << "]" << act_hp <<"/"<<hp<< endl;
     cout << Monster[b] << " HP: [";
     for (int i = 0; i < monster_hp / 10; i++)
     {
         cout << "|";
     }
-    cout << "]" << monster_hp << endl
+    cout << "]" << monster_hp<<"/"<< hp*1.2 << endl
          << endl;
 }
-void atak_potwora(int mdmg, char ruch, int a)
+void monsterAttack(int mdmg, char ruch, int a,int monster_actual_hp)
 {
     cout << ruch;
     if (ruch == 'd' || ruch == 'D')
@@ -260,51 +327,149 @@ void atak_potwora(int mdmg, char ruch, int a)
         hp_bar(monster_actual_hp, actual_hp, a);
     }
 }
-void fight(int c)
+void fight(int c,int monster_actual_hp,int monster_lvl)
 {
+    srand(time(NULL));
+    int monster_dmg;
     hp_bar(monster_actual_hp, actual_hp, c);
     do
     {
-        cout << "Twoj ruch: ";
-        char ruch = getch();
-
-        if (ruch == 'a' || ruch == 'A')
+        monster_dmg=rand()%dmg+dmg/4;
+        cout<<endl<<"---POLE SZYBKIEGO RUCHU---\n \n";
+        for(int i=0;i<consumableItemsSize;i++)
         {
-            monster_actual_hp = monster_actual_hp - dmg;
-            hp_bar(monster_actual_hp, actual_hp, c);
-            Sleep(2000);
+            cout<<i+1<<". "<<consumableItems[i]<<" - "<<consumableItemsAmount[i]<<endl;
+        }
+        cout <<endl<< "Twoj ruch: ";
+
+        char ruch = getch();
+        switch(tolower(ruch))
+        {
+            case 'a':
+            {
+                monster_actual_hp = monster_actual_hp - dmg;
+                hp_bar(monster_actual_hp, actual_hp, c);
+                cout<<"Zaatakowano przeciwnika za "<<dmg<<" hp!";
+                Sleep(1500);
+                break;
+            }
+            case '1':
+            {
+                if(consumableItemsAmount[0]>0) {
+                    actual_hp += rand() % monster_dmg + monster_dmg / 2;
+                    if (actual_hp > hp) {
+                        actual_hp = hp;
+                    }
+                    consumableItemsAmount[0]-=1;
+                    hp_bar(monster_actual_hp, actual_hp, c);
+                    cout<<"Wyleczono HP!";
+                    Sleep(1500);
+                    break;
+                }
+                else {
+                    cout << "Nie masz zadnych Health Potionow!";
+                    Sleep(1500);
+                    break;
+                }
+            }
+            case '2':
+            {
+                if(consumableItemsAmount[1]>0)
+                {
+                    monster_actual_hp-=dmg*1.25;
+                    consumableItemsAmount[1]-=1;
+                    hp_bar(monster_actual_hp, actual_hp, c);
+                    cout<<"Rzuciles daggerem w przeciwnika i zadales "<<dmg*1.25<<" hp!";
+                    Sleep(1800);
+                    break;
+                }
+                else {
+                    cout << "Nie masz zadnych Throwing Daggerow";
+                    Sleep(1800);
+                    break;
+                }
+            }
+            case '3':
+            {
+                if(consumableItemsAmount[2]>0) {
+                    monster_actual_hp -= dmg * 1.5;
+                    consumableItemsAmount[2]-=1;
+                    hp_bar(monster_actual_hp, actual_hp, c);
+                    cout<<"Rzuciles Poison Bombom w przeciwnika i zadales "<< dmg*1.5<<" hp!";
+                    Sleep(1800);
+                    break;
+                }
+                else {
+                    cout << "Nie masz zadnych Poison Bomb!";
+                    Sleep(1800);
+                    break;
+                }
+            }
+            case '4':
+            {
+                if(consumableItemsAmount[3]>0) {
+                    monster_actual_hp -= dmg * 1.75;
+                    consumableItemsAmount[3]-=1;
+                    hp_bar(monster_actual_hp, actual_hp, c);
+                    cout<<"Rzuciles Fire Bombom w przeciwnika i zadales "<< dmg*1.75<<" hp!";
+                    Sleep(1800);
+                    break;
+                }
+                else {
+                    cout << "Nie masz zadnych Fire Bomb!";
+                    Sleep(1800);
+                    break;
+                }
+            }
+            case '5':
+            {
+                if(consumableItemsAmount[4]>0) {
+                    monster_actual_hp -= dmg * 2.5;
+                    consumableItemsAmount[4]-=1;
+                    hp_bar(monster_actual_hp, actual_hp, c);
+                    cout<<"Twoj miecz jest naelektryzowany piorunami i zadaje "<< dmg*2.5<<" hp przeciwnikowi!";
+                    Sleep(1800);
+                    break;
+                }
+                else {
+                    cout << "Nie masz zadnego Lightning Powdera!";
+                    Sleep(1800);
+                    break;
+                }
+            }
         }
         if (monster_actual_hp > 0)
         {
-            atak_potwora(monster_dmg, ruch, c);
+            monsterAttack(monster_dmg, ruch, c,monster_actual_hp);
         }
     } while (monster_actual_hp > 0 && actual_hp > 0);
 
+    //zakonczenie pojedynku
     if (monster_actual_hp <= 0)
     {
         system("cls");
         cout << "Gratulacje!" << endl
              << "Wygrales z " << Monster[c] << endl;
-        cout << "Twoja nagroda to 1 lvl i 10 golda!\n";
-        Sleep(3500);
+        cout << "Twoja nagroda to 1 lvl i "<<monster_lvl*10<< "golda!\n";
+        Sleep(2500);
         lvl++;
-        gold = gold + 10;
+        gold = gold + monster_lvl*10;
     }
-    else if (hp <= 0)
+    else if (actual_hp <= 0)
     {
         system("cls");
         cout << "YOU DIED\n";
         cout << endl
              << "Straciles caly swoj majatek!\n";
-        Sleep(3500);
+        Sleep(2500);
         gold = 0;
     }
     save();
 }
 int sword_shop()
 {
-    char numerek;
-    while (numerek != '6')
+    int numerek;
+    while (numerek != 6)
     {
         system("cls");
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
@@ -456,17 +621,14 @@ int gra()
                 system("cls");
                 srand(time(NULL));
                 int n = rand() % 10; // Zalezy od ilosci przeciwnikow w liscie
-                monster_lvl = lvl * 1.4;
+                int monster_lvl = rand()%lvl+1+lvl/4;
                 cout << "Walczysz z " << Monster[n] << " majacy lvl: " << monster_lvl << endl;
                 Sleep(2000);
                 // deklaracja stat niezdefiniowanych przedtem
                 hp = lvl * 100;
-                actual_hp = hp;
-                monster_hp = hp * 1.2;
-                monster_actual_hp = monster_hp;
-                monster_dmg = hp * 0.17;
                 system("color fc");
-                fight(n);
+                actual_hp=hp;
+                fight(n,hp*1.2,monster_lvl);
                 system("color 70");
                 break;
             }
@@ -591,7 +753,7 @@ int menu()
                     cout << "Nie masz jeszcze zadnego save'u!";
                     Sleep(1500);
                 }
-                break;
+                return 0;
             }
             case '3':
             {
