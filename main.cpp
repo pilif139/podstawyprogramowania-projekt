@@ -18,7 +18,9 @@ long actual_hp;
 int dmg = 100;
 long long hp;
 int monster_lvl;
+int monster_hp_value;
 int isFirstTimePlaying=0;
+string ArenaName[]={"Rzym","Sosnowiec","Radom","ZSK","Sala Nr 62"};
 string consumableItems[]={"Hp Potion","Throwing Dagger","Poison Bomb","Fire Bomb","Lighting powder"};
 const int consumableItemsSize = sizeof(consumableItems) / sizeof(consumableItems[0]);
 int consumableItemsAmount[consumableItemsSize]={1,1,0,0,0}; //ilosc itemow mozliwych do posiadania i uzycia
@@ -431,7 +433,7 @@ void hp_bar(int monster_hp, int act_hp, int b)
     {
         cout << "|";
     }
-    cout << "]" << monster_hp<<"/"<< monster_lvl*100 << endl
+    cout << "]" << monster_hp<<"/"<< monster_hp_value << endl
          << endl;
 }
 void monsterAttack(int mdmg, char ruch, int a,int monster_actual_hp)
@@ -586,6 +588,11 @@ void fight(int c,int monster_actual_hp,int monster_lvl)
         Sleep(2500);
         lvl++;
         gold = gold + monster_lvl*10;
+        if(lvl%15==1)
+        {
+            cout<<"Brawo! Odblokowales nowa arene!\n Od teraz Bedziesz walczyl w "<<ArenaName[lvl/15];
+            Sleep(2000);
+        }
     }
     else if (actual_hp <= 0)
     {
@@ -606,8 +613,8 @@ int gra()
         save();
         system("cls");
         cout <<"Gladiator: "<<nickname<< " \t lvl: " << lvl << "\t gold: " << gold << "\t"
-             << "dmg: " << dmg <<" \t armor: "<<armor<< endl;
-        cout << "Znajdujesz sie przed brama miasta! Gdzie chcesz sie udac?\n";
+             << "dmg: " << dmg <<" \t armor: "<<armor<< endl<<endl;
+        cout << "ARENA "<<ArenaName[lvl/15]<<endl<<endl;
         cout << "1.KOLOSEUM\n";
         cout << "2.SKLEP Z BRONIA BIALA\n";
         cout << "3.SKLEP Z ALCHEMIA\n";
@@ -628,14 +635,15 @@ int gra()
                 system("cls");
                 srand(time(NULL));
                 int n = rand() % 10; // Zalezy od ilosci przeciwnikow w liscie
-                monster_lvl = rand()%(lvl+1)+lvl/3;
+                monster_lvl = rand()%lvl+lvl/2;
                 cout << "Walczysz z " << Monster[n] << " majacy lvl: " << monster_lvl << endl;
                 Sleep(2000);
                 // deklaracja stat niezdefiniowanych przedtem
                 hp = lvl * 100;
                 system("color fc");
                 actual_hp=hp;
-                fight(n,monster_lvl*100, monster_lvl);
+                monster_hp_value=rand()%(monster_lvl*50)+monster_lvl*50;
+                fight(n,monster_hp_value, monster_lvl);
                 system("color 70");
                 break;
             }
