@@ -11,7 +11,8 @@ string nickname;
 int sekret = 0;
 int maks1=0;
 int maks2=0;
-int armor=5; //NIE DAWAJ 0
+int maks3=0;
+int armor=5;
 int lvl = 1;
 long gold = 0;
 long actual_hp;
@@ -20,11 +21,11 @@ long long hp;
 int monster_lvl;
 int monster_hp_value;
 int isFirstTimePlaying=0;
-string ArenaName[]={"Rzym","Sosnowiec","Radom","ZSK","Sala Nr 62"};
+string ArenaName[]={"Rzym","Sosnowiec","Radom","ZSK","Sala Nr 62", "Ziemia Niczyja lidl", "Poznan w remoncie"};
 string consumableItems[]={"Hp Potion","Throwing Dagger","Poison Bomb","Fire Bomb","Lighting powder"};
 const int consumableItemsSize = sizeof(consumableItems) / sizeof(consumableItems[0]);
 int consumableItemsAmount[consumableItemsSize]={1,1,0,0,0}; //ilosc itemow mozliwych do posiadania i uzycia
-string Monster[] = {"Ork", "Troll", "Pudzianowski", "Pirat", "Dres", "Brajanek", "Karen", "Dudy Rick", "Kanye East", "Informatyk"};
+string Monster[] = {"Ork", "Troll", "Pudzianowski", "Pirat", "Dres", "Brajanek", "Karen", "Dudy Rick", "Kanye East", "Informatyk", "Evil Menel", "Kangurek Kao", "Dwayne the Pebble Jonson", "Technik Pszczelarstwa", "Budowlaniec", "Tomasz"};
 
 void loading()
 {
@@ -61,6 +62,7 @@ int save()
     myfile << consumableItemsAmount[2]<<endl;
     myfile << consumableItemsAmount[3]<<endl;
     myfile << consumableItemsAmount[4]<<endl;
+    myfile << maks3<<endl;
     myfile.close();
 
     return 0;
@@ -121,6 +123,9 @@ int load_save()
             case 14:
                 consumableItemsAmount[4]=atoi(linia.c_str());
                 break;
+            case 15:
+                maks3=atoi(linia.c_str());
+                break;
         }
 
         nr_linii++;
@@ -128,6 +133,65 @@ int load_save()
 
     plik.close();
     return 0;
+}
+int casino()
+{
+
+    system("cls");
+    char numerek3;
+    while (numerek3 != 2) {
+        system("cls");
+        cout << "Witaj w kasynie, gotowy *zainwestowac* swoje pieniadze?" << endl;
+        cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        cout << "1.Oczywiscie(150 golda)" << endl;
+        cout << "2.Wole wyjsc\n" << endl;
+        cout << "Co powiesz?: " <<endl;
+        numerek3 = getch();
+        system("cls");
+
+        srand(time(0));
+        switch (numerek3)
+        {
+            case '1':
+            {
+                if(gold>=150)
+                {
+                    gold=gold-150;
+                    int r=(rand()%500-200);
+                    cout << "Zakreciles machine";
+                    for (int j = 0; j < 3; j++)
+                    {
+                        cout << ".";
+                        Sleep(1000);
+                    }
+                    system("cls");
+                    cout << "Wylosowales  " << r << " golda!" << endl;
+                    gold=gold+r;
+                    Sleep(2000);
+                    break;
+                }
+                else
+                {
+                    cout<<"Maszyna losujaca nie przyjmuje takich biedackich monet!";
+                    Sleep(1500);
+                    break;
+                }
+            }
+
+            case '2':
+            {
+                cout << "Wychodzisz z kasyna!" << endl;
+                Sleep(400);
+                return 0;
+            }
+            default:
+            {
+                cout << "Takich rzeczy w naszym kasynie nie ma";
+                Sleep(1100);
+                break;
+            }
+        }
+    }
 }
 int alchemic_shop()
 {
@@ -137,9 +201,9 @@ int alchemic_shop()
     {
         system("cls");
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-        cout << "	Witaj w Sklepie Alchemicznym" << endl;
+        cout << "  Witaj w Sklepie Alchemicznym" << endl;
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-        cout <<"Ilosc golda: "<<gold<<endl;
+        cout <<endl<<"Ilosc golda: "<<gold<<endl<<endl;
         cout << "Nazwa:\t\t\t Cena:" << endl;
         cout << "1.Health Potion \t 30 golda" << endl;
         cout << "2.Throwing Dagger \t 50 golda" << endl;
@@ -180,20 +244,17 @@ int alchemic_shop()
 
     return 0;
 } //zbalansowac ceny do dmg'u
-int cult()
-{
-    char numerek2;
-    while(numerek2!=3){
-        system("cls");
-        if (sekret == 0)
-        {
-            cout << "Menel: Kim ty jestes?" << endl;
-            cout << "Menel: Zimno nam, nie potrzebujemy cie w naszym skladzie" << endl;
-            Sleep(2000);
-            return 0;
-        }
-        else if(sekret==1)
-        {
+int cult() {
+    system("cls");
+    if (sekret == 0) {
+        cout << "Menel: Kim ty jestes?" << endl;
+        cout << "Menel: Zimno nam, nie potrzebujemy cie w naszym skladzie" << endl;
+        Sleep(2000);
+        return 0;
+    } else if (sekret > 0)
+    {
+        char numerek2;
+        while (numerek2 != 3) {
             system("cls");
             cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
             cout << "    	   Masz Klapki, Ufamy Tobie" << endl;
@@ -202,45 +263,41 @@ int cult()
             cout << "1.Mlot Legendarnego Hog Ridera(1,5x dmg) \t 150 golda" << endl;
             cout << "2.Magiczny Poison Mirka(2x dmg) \t\t 200 golda\n"
                  << endl;
-            cout << "3.Wyjdz ze sklepu" << endl;
-            cout << "" << endl;
+            cout << "3.Wyjdz ze sklepu" << endl<<endl;
+            if(sekret==2)
+            {
+                cout<<"4. Legendarny Trojzab Boga Denaturatosa \t 300 golda\n \n";
+            }
             cout << "Co chcesz kupic?" << endl;
             numerek2 = getch();
             system("cls");
 
-            switch (numerek2)
-            {
-                case '1':
-                {
-                    if(maks1==0)
-                    {
-                        if(gold <= 150)
-                        {
+            switch (numerek2) {
+                case '1': {
+                    if (maks1 == 0) {
+                        if (gold < 150) {
                             cout << "Ale ze ty chcesz zebrac od zebraka?!?!" << endl;
                             Sleep(2000);
                             break;
-                        }
-                        else if(gold >= 150)
-                        {
-                            cout << "kupiles Mlot Legendarnego Hog Ridera, masz potrzebe by krzyczec, kosztowalo cie to 150 golda" << endl;
+                        } else if (gold >= 150) {
+                            cout
+                                    << "kupiles Mlot Legendarnego Hog Ridera, masz potrzebe by krzyczec, kosztowalo cie to 150 golda"
+                                    << endl;
                             gold = gold - 150;
                             dmg = dmg * 1.5;
-                            maks1=1;
+                            maks1 = 1;
                             Sleep(2000);
                             break;
                         }
-                    }
-                    else if(maks1==1){
-                        cout<<"HOG RIDER MA TYLKO JEDEN MLOT!!!";
+                    } else if (maks1 == 1) {
+                        cout << "HOG RIDER MA TYLKO JEDEN MLOT!!!";
                         Sleep(1500);
                         break;
                     }
                 }
-                case '2':
-                {
-                    if(maks2==0)
-                    {
-                        if (gold <= 200) {
+                case '2': {
+                    if (maks2 == 0) {
+                        if (gold < 200) {
                             cout << "Ale ze ty chcesz zebrac od zebraka?!?!" << endl;
                             Sleep(2000);
                             break;
@@ -254,21 +311,51 @@ int cult()
                             Sleep(2000);
                             break;
                         }
+                    } else if (maks2 == 1) {
+                        cout << "Nasz mirek juz nie produkuje takich ustrojstw! ";
+                        Sleep(1500);
+                        break;
                     }
-                    else if(maks2==1){
-                            cout<<"Nasz mirek juz nie produkuje takich ustrojstw! ";
-                            Sleep(1500);
-                            break;
-                        }
-                    }
-                case '3':
-                {
+                }
+                case '3': {
                     cout << "Wychodzisz z kultu!";
                     Sleep(1000);
                     return 0;
                 }
-                default:
+                case '4':
                 {
+                    if(sekret==2)
+                    {
+                        if(maks3==0)
+                        {
+                            if(gold < 300)
+                            {
+                                cout<<"Nie masz tyle kasy, aby kupic bron samego boga!";
+                                Sleep(2000);
+                                break;
+                            }
+                            else if(gold>=300)
+                            {
+                                cout<<"Stales sie Bogiem Denaturatosem!!!\n";
+                                cout<<"Twoje ataki są od teraz wspierane przez alkohol!";
+                                gold=gold-300;
+                                dmg=dmg*3;
+                                maks3=1;
+                                Sleep(2000);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            cout<<"Juz jestes Bogiem Denaturatosem!";
+                            Sleep(1500);
+                            break;
+                        }
+                    }
+                    else
+                        break;
+                }
+                default: {
                     cout << "Jeremiaszu, to nie u nas";
                     Sleep(2000);
                     break;
@@ -286,6 +373,7 @@ int sword_shop()
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
         cout << "	Witaj w Sklepie" << endl;
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+        cout <<endl<<"Ilosc golda: "<<gold<<endl<<endl;
         cout << "Nazwa:\t\t\t Cena:" << endl;
         cout << "1.Klapek(+12 dmg) \t 15 golda" << endl;
         cout << "2.Dlugopis(+18 dmg) \t 25 golda" << endl;
@@ -468,7 +556,7 @@ void fight(int c,int monster_actual_hp,int monster_lvl)
     hp_bar(monster_actual_hp, actual_hp, c);
     do
     {
-        monster_dmg=rand()%dmg+dmg/4;
+        monster_dmg=rand()%(dmg/2)+dmg/2;
         cout<<endl<<"---POLE SZYBKIEGO RUCHU---\n \n";
         for(int i=0;i<consumableItemsSize;i++)
         {
@@ -571,6 +659,7 @@ void fight(int c,int monster_actual_hp,int monster_lvl)
                     break;
                 }
             }
+            default: cout<<"Stracono ruch!"; Sleep(1000); monster_dmg=monster_dmg-monster_dmg/3; break;
         }
         if (monster_actual_hp > 0)
         {
@@ -584,14 +673,17 @@ void fight(int c,int monster_actual_hp,int monster_lvl)
         system("cls");
         cout << "Gratulacje!" << endl
              << "Wygrales z " << Monster[c] << endl;
-        cout << "Twoja nagroda to 1 lvl i "<<monster_lvl*10<< "golda!\n";
+        int droppedGoldFromMonster=rand()%(monster_lvl*10)+10;
+        cout << "Twoja nagroda to 1 lvl i "<<droppedGoldFromMonster<< "golda!\n";
         Sleep(2500);
         lvl++;
-        gold = gold + monster_lvl*10;
-        if(lvl%15==1)
+        gold = gold + droppedGoldFromMonster;
+        if(lvl%10==0)
         {
-            cout<<"Brawo! Odblokowales nowa arene!\n Od teraz Bedziesz walczyl w "<<ArenaName[lvl/15];
-            Sleep(2000);
+            system("cls");
+            system("color e1");
+            cout<<"Brawo! Odblokowales nowa arene!\n Od teraz Bedziesz walczyl w "<<ArenaName[lvl/10];
+            Sleep(3000);
         }
     }
     else if (actual_hp <= 0)
@@ -611,15 +703,24 @@ int gra()
     while (wybor != 5)
     {
         save();
+        system("color 70");
         system("cls");
         cout <<"Gladiator: "<<nickname<< " \t lvl: " << lvl << "\t gold: " << gold << "\t"
              << "dmg: " << dmg <<" \t armor: "<<armor<< endl<<endl;
-        cout << "ARENA "<<ArenaName[lvl/15]<<endl<<endl;
+        cout << "ARENA "<<ArenaName[lvl/10]<<endl<<endl;
         cout << "1.KOLOSEUM\n";
         cout << "2.SKLEP Z BRONIA BIALA\n";
         cout << "3.SKLEP Z ALCHEMIA\n";
         cout << "4.MIEJSCE KULTU MENELI\n";
-        cout << "5.UCIEKNIJ (wyjscie z gry)\n";
+        if(lvl<10)
+        {
+            cout << "5.UCIEKNIJ (wyjscie z gry)\n";
+        }
+        else if(lvl>=10)
+        {
+            cout<<"5.KASYNO LAS VEGAS SPONSORED \n";
+            cout << "6.UCIEKNIJ (wyjscie z gry)\n";
+        }
         cout << "Twoj wybor: ";
         wybor = getch();
         switch (wybor)
@@ -634,28 +735,31 @@ int gra()
                 }
                 system("cls");
                 srand(time(NULL));
-                int n = rand() % 10; // Zalezy od ilosci przeciwnikow w liscie
+                const int MonsterListSize = sizeof(Monster) / sizeof(Monster[0]);
+                int n = rand() % MonsterListSize;
                 monster_lvl = rand()%lvl+lvl/2;
+                if(monster_lvl==0)
+                    monster_lvl=1;
                 cout << "Walczysz z " << Monster[n] << " majacy lvl: " << monster_lvl << endl;
                 Sleep(2000);
                 // deklaracja stat niezdefiniowanych przedtem
                 hp = lvl * 100;
                 system("color fc");
                 actual_hp=hp;
-                monster_hp_value=rand()%(monster_lvl*50)+monster_lvl*50;
+                monster_hp_value=rand()%(monster_lvl*10)+monster_lvl*100;
+                system("color fc");
                 fight(n,monster_hp_value, monster_lvl);
-                system("color 70");
                 break;
             }
             case '2':
             {
                 system("color 8e");
                 sword_shop();
-                system("color 70");
                 break;
             }
             case '3':
             {
+                system("color 5f");
                 alchemic_shop();
                 break;
             }
@@ -663,12 +767,23 @@ int gra()
             {
                 system("color 08");
                 cult();
-                system("color 70");
                 break;
             }
             case '5':
             {
-                return 0;
+                if(lvl<10)
+                    return 0;
+                else if(lvl>=10)
+                    system("color 1f");
+                    casino();
+                    break;
+            }
+            case '6':
+            {
+                if(lvl>=10)
+                    return 0;
+                else
+                    break;
             }
 
             default:
@@ -707,8 +822,8 @@ void CharacterCreate()
         }
         case '3':
         {
-            cout<<"Otrzymujesz szacunek ludzi ulicy!";
-            sekret=1; //moze dodatkowy item w kulcie
+            cout<<"Otrzymujesz szacunek ludzi ulicy";
+            sekret=2;
             Sleep(1800);
             break;
         }
