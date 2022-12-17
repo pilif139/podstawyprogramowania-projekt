@@ -9,39 +9,31 @@
 using namespace std;
 
 string nickname;
+int BeatGame=0;
 int sekret = 0;
 int walter_white=0;
 int maks1=0;
 int maks2=0;
 int maks3=0;
-int armor=5;
+int armor=10;
 int lvl = 1;
 long gold = 0;
 long actual_hp;
-int dmg = 100;
+int dmg = 70;
 long long hp;
 int hpBarConvert;
-int MonsterHpBarConvert;
 int monster_lvl;
 int monster_hp_value;
-string ArenaName[]={"Rzym","Sosnowiec","Radom","ZSK","Sala Nr 62", "Ziemia Niczyja lidl", "Poznan w remoncie","Spot Rybacki o 4 rano"};
+string ArenaName[]={"Żym","Sosnowiec","Radom","ZSK","Sala Nr 62", "Ziemia Niczyja lidl", "Poznań w remoncie","Spot Rybacki o 4 rano","Tilted Towers","Anor Londo"};
 string consumableItems[]={"Hp Potion","Throwing Dagger","Poison Bomb","Fire Bomb","Lighting powder"};
 const int consumableItemsSize = sizeof(consumableItems) / sizeof(consumableItems[0]);
-int consumableItemsAmount[consumableItemsSize]={1,1,0,0,0}; //ilosc itemow mozliwych do posiadania i uzycia
+int consumableItemsAmount[]={1,1,0,0,0};
 string Monster[] = {"Ork", "Troll", "Pudzianowski", "Pirat", "Dres", "Brajanek", "Karen", "Dudy Rick", "Kanye East", "Informatyk",
                     "Evil Menel", "Kangurek Kao", "Dwayne the Pebble Jonson", "Technik Pszczelarstwa", "Budowlaniec", "Tomasz"};
-string swordShopItems[]={"Klapek","Dlugopis","Kabelek","Rekawiczki","Mlot pneumatyczny","Dragon Blade"};
+string swordShopItems[]={"Klapek","Długopis","Kabelek","Rękawiczki","Młot pneumatyczny","Dragon Blade"};
 int swordShopItemAmount[]={0,0,0,0,0,0};
 int armorShopItemAmount[]={0,0,0,0,0,0};
-string armorShopItems[]={"Sandaly","Pancerniki Januszowe","Cevlar z Fortnite","ChugJug","Zbroja Cebuli","Ciezka Zbroja Havela"};
-BOOL WINAPI SetConsoleOutputCP(
-        UINT wCodePageID
-);
-BOOL WINAPI SetCurrentConsoleFontEx(
-        _In_ HANDLE               hConsoleOutput,
-        _In_ BOOL                 bMaximumWindow,
-        _In_ PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx
-);
+string armorShopItems[]={"Sandał","Pancerniki Januszowe","Cevlar z Fortnite","ChugJug","Zbroja Cebuli","Ciężka Zbroja Havela"};
 void loading()
 {
     system("cls");
@@ -49,10 +41,10 @@ void loading()
          << endl;
     Sleep(2000);
     cout << "Rada:\n";
-    cout << "Atak znajduje sie pod przyciskiem A!\n";
-    cout << "Obrona znajduje sie pod przyciskiem D!\n";
+    cout << "Atak znajduje się pod przyciskiem A!\n";
+    cout << "Obrona znajduje się pod przyciskiem D!\n";
     cout << endl;
-    cout << "Ladowanie gry";
+    cout << "Ładowanie gry";
     for (int i = 0; i < 3; i++)
     {
         cout << ".";
@@ -89,6 +81,7 @@ int save()
     myfile << armorShopItemAmount[3]<<endl;
     myfile << armorShopItemAmount[4]<<endl;
     myfile << armorShopItemAmount[5]<<endl;
+    myfile <<BeatGame<<endl;
     myfile.close();
 
     return 0;
@@ -190,6 +183,9 @@ int load_save()
             case 26:
                 armorShopItemAmount[5]=atoi(linia.c_str());
                 break;
+            case 27:
+                BeatGame=atoi(linia.c_str());
+                break;
         }
 
         nr_linii++;
@@ -263,7 +259,7 @@ void casino()
 }
 void alchemic_shop()
 {
-    int consumableItemsPrice[consumableItemsSize]={30,50,85,150,200};
+    int consumableItemsPrice[]={30,50,85,150,200};
     int Choice;
     while(Choice!=6)
     {
@@ -271,15 +267,15 @@ void alchemic_shop()
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
         cout << "  Witaj w Sklepie Alchemicznym" << endl;
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-        cout <<endl<<"Ilosc golda: "<<gold<<endl<<endl;
+        cout <<endl<<"Ilość golda: "<<gold<<endl<<endl;
         cout << "Nazwa:\t\t\t Cena:" << endl;
         cout << "1.Health Potion \t 30 golda" << endl;
         cout << "2.Throwing Dagger \t 50 golda" << endl;
         cout << "3.Poison Bomb \t\t 85 golda" << endl;
         cout << "4.Fire Bomb \t\t 150 golda" << endl;
         cout << "5.Lighting Powder \t 200 golda\n"<<endl;
-        cout << "6.Wyjdz ze sklepu";
-        cout<<endl<<"Twoj wybor: ";
+        cout << "6.Wyjdź ze sklepu";
+        cout<<endl<<"Twój wybór: ";
         unsigned char x=getch();
         Choice = x - '0';
         system("cls");
@@ -289,11 +285,11 @@ void alchemic_shop()
             {
                 consumableItemsAmount[Choice-1]+=1;
                 gold-=consumableItemsPrice[Choice-1];
-                cout<<"Zakupiles "<<consumableItems[Choice-1];
+                cout<<"Zakupiłeś "<<consumableItems[Choice-1];
                 Sleep(1500);
             }
             else {
-                cout << "Nie stac cie na to!";
+                cout << "Nie stać cię na to!";
                 Sleep(1500);
             }
         }
@@ -314,10 +310,11 @@ void cult() {
     system("cls");
     if (swordShopItemAmount[5]<1) {
         cout << "Menel: Kim ty jestes?" << endl;
-        cout << "Menel: Zimno nam, nie potrzebujemy cie w naszym skladzie" << endl;
-        Sleep(2000);
+        cout << "Menel: Zimno nam, nie potrzebujemy cię w naszym skladzie" << endl;
+        Sleep(5000);
         return;
-    } else if (swordShopItemAmount[5]==1)
+    }
+    else if (swordShopItemAmount[5]>=1)
     {
         unsigned char numerek2;
         while (numerek2 != 3) {
@@ -369,7 +366,7 @@ void cult() {
                             break;
                         } else if (gold >= 200) {
                             cout
-                                    << "kupileś Magiczny Poison Mirka, wykonany jest po harnasiu, kosztowalo cię to 200 golda"
+                                    << "kupiłeś Magiczny Poison Mirka, wykonany jest po harnasiu, kosztowało cię to 200 golda"
                                     << endl;
                             gold = gold - 200;
                             dmg = dmg * 2;
@@ -402,7 +399,7 @@ void cult() {
                             }
                             else if(gold>=300)
                             {
-                                cout<<"Stales sie Bogiem Denaturatosem!!!\n";
+                                cout<<"Stałeś się Bogiem Denaturatosem!!!\n";
                                 cout<<"Twoje ataki są od teraz wspierane przez efekt nietrzeźwości sprawiający, że twój styl walki jest nieprzewidywalny!";
                                 gold=gold-300;
                                 dmg=dmg*3;
@@ -433,7 +430,7 @@ void cult() {
 void pomnik(){
 
     system("cls");
-    cout << "Idąc po drodze, napotkaleś starszego łysego pana w okularach przy wanie\n" << endl;
+    cout << "Idąc po drodze, napotkałeś starszego łysego pana w okularach przy wanie\n" << endl;
     cout << "Chcesz podejść do niego?\n" <<endl;
     cout<<"1.Tak"<<endl;
     cout<<"2.Nie"<<endl;
@@ -466,7 +463,7 @@ void pomnik(){
                         dmg=dmg*0.75;
                         Sleep(1000);
                         return;
-                    default: cout<<"Jesteś zamyslony i odchodzisz w dal...";Sleep(1000); return;
+                    default: cout<<"Jesteś zamyślony i odchodzisz w dal...";Sleep(1000); return;
                 }
             }
 
@@ -492,36 +489,36 @@ void pomnik(){
                     gold = gold - 2;
                     return;
                 default:
-                    cout<<"Jesteś zamyslony i odchodzisz w dal..."; Sleep(1000); return;
+                    cout<<"Jesteś zamyślony i odchodzisz w dal..."; Sleep(1000); return;
                 }
-                    default: cout<<"Jesteś zamyslony i odchodzisz w dal...";Sleep(1000); return;
+                    default: cout<<"Jesteś zamyślony i odchodzisz w dal...";Sleep(1000); return;
     }
 }
 void sword_shop()
 {
     int swordShopItemsPrice[]={20,40,60,100,200,350};
     int swordShopItemVar[]={12,18,24,35,50,100};
-    string swordShopItemQuote[]={"Od teraz będziesz używać go jako sztylet","Masz swiadomosc ze kable>przewody?","Nagle poczules sie cieply",
-                                 "Twoje cialo wypelnia determinacja","Twoje ortograficzne i geograficzne zdolnosci wzrosly!","Stales sie furasem przebranym za smoka!"};
+    string swordShopItemQuote[]={"Od teraz będziesz używać go jako sztylet","Masz swiadomość że kable>przewody?","Nagle poczułeś się ciepły",
+                                 "Twoje ciało wypełnia determinacja","Wyremontujesz nim cały Poznań!","Stałeś się furasem przebranym za smoka!"};
     //daloby sie tabele z nazwami wypisac w forze zamiast tego ale wtedy ceny golda sa nierowno
     int numerek;
     while (numerek != 7)
     {
         system("cls");
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-        cout << "  Witaj w Sklepie z bronia biala" << endl;
+        cout << "  Witaj w Sklepie z bronią białą" << endl;
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
         cout <<endl<<"Ilosc golda: "<<gold<<endl<<endl;
         cout << "Nazwa:\t\t\t\t Cena:" << endl;
         cout << "1.Klapek (12 dmg) +"<<swordShopItemAmount[0]<<" \t\t 20 golda" << endl;
-        cout << "2.Dlugopis (18 dmg) +"<<swordShopItemAmount[1]<<" \t\t 40 golda" << endl;
+        cout << "2.Długopis (18 dmg) +"<<swordShopItemAmount[1]<<" \t\t 40 golda" << endl;
         cout << "3.Kabelek (24 dmg) +"<<swordShopItemAmount[2]<<" \t\t 60 golda" << endl;
-        cout << "4.Rekawiczki (35 dmg) +"<<swordShopItemAmount[3]<<" \t 100 golda" << endl;
-        cout << "5.Mlot pneumatyczny (50dmg) +"<<swordShopItemAmount[4]<<" \t 200 golda\n";
+        cout << "4.Rękawiczki (35 dmg) +"<<swordShopItemAmount[3]<<" \t 100 golda" << endl;
+        cout << "5.Młot pneumatyczny (50dmg) +"<<swordShopItemAmount[4]<<"\t 200 golda\n";
         cout << "6.Dragon Blade (100dmg) +"<<swordShopItemAmount[5]<<" \t 350 golda \n";
-        cout << endl << "7.Wyjdz ze sklepu" << endl;
+        cout << endl << "7.Wyjdź ze sklepu" << endl;
         cout << "" << endl;
-        cout << "Co chcesz kupic?" << endl;
+        cout << "Co chcesz kupić?" << endl;
         unsigned char x=getch();
         numerek = x-'0';
         system("cls");
@@ -534,18 +531,18 @@ void sword_shop()
                     swordShopItemAmount[numerek-1]+=1;
                     gold-=swordShopItemsPrice[numerek-1];
                     dmg+=swordShopItemVar[numerek-1];
-                    cout<<"Kupiles "<<swordShopItems[numerek-1]<<" +"<<swordShopItemAmount[numerek-1]<<", kosztowalo cie to "<<swordShopItemsPrice[numerek-1]<<" golda."<<endl;
+                    cout<<"Kupiłeś "<<swordShopItems[numerek-1]<<" +"<<swordShopItemAmount[numerek-1]<<", kosztowało cię to "<<swordShopItemsPrice[numerek-1]<<" golda."<<endl;
                     cout<<swordShopItemQuote[numerek-1];
                     Sleep(1750);
                 }
                 else {
-                    cout << "Nie stac cie na to!";
+                    cout << "Nie stać cię na to!";
                     Sleep(1500);
                 }
             }
             else{
-                cout<<swordShopItems[numerek-1]<<" jest juz maksymalnie ulepszony!";
-                Sleep(1500);
+                cout<<swordShopItems[numerek-1]<<" jest już maksymalnie ulepszony!";
+                Sleep(1000);
             }
         }
         else if(numerek==7) {
@@ -564,8 +561,8 @@ void armorShop()
 {
     int armorShopPrice[]={25,50,100,150,250,350};
     int armorShopVar[]={5,10,25,40,60,80};
-    string armorShopQuote[]={"Do tych sandalow brakuje ci jeszcze skarpetek.","Zbroja Janusza dla prawdziwych Januszy biznesu.","To chyba nie te uniwersum.","take me to your xbox to play fortnite today \n you can take me to the moisty mire but not loot lake \n i would really love to, chug jug with you \n we can be pro fortnite gamers ",
-                             "Od teraz wygladasz i czujesz sie jak cebula","Ta zbroja jest tak ciezka ze jedyne co mozesz robic to stac i machac mieczem."};
+    string armorShopQuote[]={"Do tych sandałow brakuje ci jeszcze skarpetek.","Zbroja Janusza dla prawdziwych Januszy biznesu.","To chyba nie te uniwersum.","take me to your xbox to play fortnite today \n you can take me to the moisty mire but not loot lake \n i would really love to, chug jug with you \n we can be pro fortnite gamers ",
+                             "Od teraz wyglądasz i czujesz się jak cebula","Ta zbroja jest tak ciężka ze jedyne co możesz robic to stać i machać mieczem."};
     int numerek;
     while (numerek != 7)
     {
@@ -573,17 +570,17 @@ void armorShop()
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
         cout << "       Witaj w Zbrojowni!" << endl;
         cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-        cout <<endl<<"Ilosc golda: "<<gold<<endl<<endl;
+        cout <<endl<<"Ilość golda: "<<gold<<endl<<endl;
         cout << "Nazwa:\t\t\t\t\t Cena:" << endl;
-        cout << "1.Sandaly (+5 armora ) +"<<armorShopItemAmount[0]<<" \t\t 25 golda" << endl;
+        cout << "1.Sandały (+5 armora ) +"<<armorShopItemAmount[0]<<" \t\t 25 golda" << endl;
         cout << "2.Pancerniki Januszowe (+10 armora) +"<<armorShopItemAmount[1]<<" \t 50 golda" << endl;
         cout << "3.Cevlar z Fortnite (+25 armora) +"<<armorShopItemAmount[2]<<" \t 100 golda" << endl;
         cout << "4.ChugJug (+40 armora) +"<<armorShopItemAmount[3]<<" \t\t 150 golda" << endl;
         cout << "5.Zbroja Cebuli (+60 armora) +"<<armorShopItemAmount[4]<<" \t 250 golda\n";
-        cout << "6.Ciezka Zbroja Havela(+80 armora) +"<<armorShopItemAmount[5]<<" \t 350 golda \n";
+        cout << "6.Ciężka Zbroja Havela(+80 armora) +"<<armorShopItemAmount[5]<<" \t 350 golda \n";
         cout << endl << "7.Wyjdz ze sklepu" << endl;
         cout << "" << endl;
-        cout << "Co chcesz kupic?" << endl;
+        cout << "Co chcesz kupić?" << endl;
         unsigned char x=getch();
         numerek = x-'0';
         system("cls");
@@ -596,18 +593,18 @@ void armorShop()
                     armorShopItemAmount[numerek-1]+=1;
                     gold-=armorShopPrice[numerek-1];
                     armor+=armorShopVar[numerek-1];
-                    cout<<"Kupiles "<<armorShopItems[numerek-1]<<" +"<<armorShopItemAmount[numerek-1]<<", kosztowalo cie to "<<armorShopPrice[numerek-1]<<" golda."<<endl;
+                    cout<<"Kupileś "<<armorShopItems[numerek-1]<<" +"<<armorShopItemAmount[numerek-1]<<", kosztowało cię to "<<armorShopPrice[numerek-1]<<" golda."<<endl;
                     cout<<armorShopQuote[numerek-1];
                     Sleep(1750);
                 }
                 else {
-                    cout << "Nie stac cie na to!";
+                    cout << "Nie stać cię na to!";
                     Sleep(1500);
                 }
             }
             else
             {
-                cout<<armorShopItems[numerek-1]<<" jest juz maksymalnie ulepszony!";
+                cout<<armorShopItems[numerek-1]<<" jest już maksymalnie ulepszony!";
                 Sleep(1500);
             }
         }
@@ -626,7 +623,7 @@ void armorShop()
 void hp_bar(int monster_hp, int act_hp, int b)
 {
     system("cls");
-    hpBarConvert=pow(10,(log10(hp))-1);
+    hpBarConvert=pow(10,log10(hp)-1);
     cout <<nickname<<" HP: [";
     for (int i = 0; i <= act_hp / hpBarConvert; i++)
     {
@@ -643,7 +640,7 @@ void hp_bar(int monster_hp, int act_hp, int b)
 }
 void monsterAttack(int mdmg, int a,int monster_actual_hp)
 {
-    actual_hp=actual_hp-(mdmg-armor/5);
+    actual_hp=actual_hp-(mdmg-armor);
     hp_bar(monster_actual_hp, actual_hp, a);
     system("color CF");
     cout << Monster[a] << " cie atakuje!";
@@ -659,13 +656,13 @@ void fight(int n,int monster_actual_hp)
     hp_bar(monster_actual_hp, actual_hp, n);
     do
     {
-        monster_dmg=rand()%dmg+dmg/3;
+        monster_dmg=rand()%(monster_lvl*25)+monster_lvl*20;
         cout<<endl<<"---POLE SZYBKIEGO RUCHU---\n \n";
         for(int i=0;i<consumableItemsSize;i++)
         {
             cout<<i+1<<". "<<consumableItems[i]<<" - "<<consumableItemsAmount[i]<<endl;
         }
-        cout <<endl<< "Twoj ruch: ";
+        cout <<endl<< "Twój ruch: ";
 
         unsigned char ruch = getch();
         ruch=tolower(ruch);
@@ -681,7 +678,7 @@ void fight(int n,int monster_actual_hp)
             }
             case 'd':
                 {
-                    actual_hp=actual_hp-(monster_dmg-armor*1.2);
+                    actual_hp=actual_hp-(monster_dmg-armor*2);
                     hp_bar(monster_actual_hp, actual_hp, n);
                     cout << "BLOK!";
                     Sleep(2000);
@@ -692,7 +689,7 @@ void fight(int n,int monster_actual_hp)
             case '1':
             {
                 if(consumableItemsAmount[0]>0) {
-                    actual_hp += rand() % monster_dmg + monster_dmg / 2;
+                    actual_hp += rand() % monster_dmg + monster_dmg;
                     if (actual_hp > hp) {
                         actual_hp = hp;
                     }
@@ -703,7 +700,7 @@ void fight(int n,int monster_actual_hp)
                     break;
                 }
                 else {
-                    cout << "Nie masz zadnych Health Potionow!";
+                    cout << "Nie masz żadnych Health Potionow!";
                     Sleep(1500);
                     break;
                 }
@@ -715,12 +712,12 @@ void fight(int n,int monster_actual_hp)
                     monster_actual_hp-=dmg*1.25;
                     consumableItemsAmount[1]-=1;
                     hp_bar(monster_actual_hp, actual_hp, n);
-                    cout<<"Rzuciles daggerem w przeciwnika i zadales "<<dmg*1.25<<" hp!";
+                    cout<<"Rzuciłeś daggerem w przeciwnika i zadałeś "<<dmg*1.25<<" hp!";
                     Sleep(1800);
                     break;
                 }
                 else {
-                    cout << "Nie masz zadnych Throwing Daggerow";
+                    cout << "Nie masz żadnych Throwing Daggerow";
                     Sleep(1800);
                     break;
                 }
@@ -731,12 +728,12 @@ void fight(int n,int monster_actual_hp)
                     monster_actual_hp -= dmg * 1.5;
                     consumableItemsAmount[2]-=1;
                     hp_bar(monster_actual_hp, actual_hp, n);
-                    cout<<"Rzuciles Poison Bombom w przeciwnika i zadales "<< dmg*1.5<<" hp!";
+                    cout<<"Rzuciłeś Poison Bombom w przeciwnika i zadałeś "<< dmg*1.5<<" hp!";
                     Sleep(1800);
                     break;
                 }
                 else {
-                    cout << "Nie masz zadnych Poison Bomb!";
+                    cout << "Nie masz żadnych Poison Bomb!";
                     Sleep(1800);
                     break;
                 }
@@ -747,12 +744,12 @@ void fight(int n,int monster_actual_hp)
                     monster_actual_hp -= dmg * 1.75;
                     consumableItemsAmount[3]-=1;
                     hp_bar(monster_actual_hp, actual_hp, n);
-                    cout<<"Rzuciles Fire Bombom w przeciwnika i zadales "<< dmg*1.75<<" hp!";
+                    cout<<"Rzuciłeś Fire Bombom w przeciwnika i zadałeś "<< dmg*1.75<<" hp!";
                     Sleep(1800);
                     break;
                 }
                 else {
-                    cout << "Nie masz zadnych Fire Bomb!";
+                    cout << "Nie masz żadnych Fire Bomb!";
                     Sleep(1800);
                     break;
                 }
@@ -763,12 +760,12 @@ void fight(int n,int monster_actual_hp)
                     monster_actual_hp -= dmg * 2.5;
                     consumableItemsAmount[4]-=1;
                     hp_bar(monster_actual_hp, actual_hp, n);
-                    cout<<"Twoj miecz jest naelektryzowany piorunami i zadaje "<< dmg*2.5<<" hp przeciwnikowi!";
+                    cout<<"Twój miecz jest naelektryzowany piorunami i zadaje "<< dmg*2.5<<" hp przeciwnikowi!";
                     Sleep(1800);
                     break;
                 }
                 else {
-                    cout << "Nie masz zadnego Lightning Powdera!";
+                    cout << "Nie masz żadnego Lightning Powdera!";
                     Sleep(1800);
                     break;
                 }
@@ -786,17 +783,18 @@ void fight(int n,int monster_actual_hp)
     {
         system("cls");
         cout << "Gratulacje!" << endl
-             << "Wygrales z " << Monster[n] << endl;
+             << "Wygrałeś z " << Monster[n] << endl;
         int droppedGoldFromMonster=rand()%(monster_lvl*10)+10;
         cout << "Twoja nagroda to 1 lvl i "<<droppedGoldFromMonster<< "golda!\n";
         Sleep(2500);
         lvl++;
+        dmg+=10;
         gold = gold + droppedGoldFromMonster;
-        if(lvl%10==0)
+        if(lvl%10==0&&lvl<100)
         {
             system("cls");
             system("color e1");
-            cout<<"Brawo! Odblokowales nowa arene!\n Od teraz Bedziesz walczyl w "<<ArenaName[lvl/10];
+            cout<<"Brawo! Odblokowałeś nowa arene!\n Od teraz Będziesz walczył w "<<ArenaName[lvl/10];
             Sleep(3000);
         }
     }
@@ -805,51 +803,83 @@ void fight(int n,int monster_actual_hp)
         system("cls");
         cout << "YOU DIED\n";
         cout << endl
-             << "Straciles caly swoj majatek!\n";
+             << "Straciłeś cały swój majątek!\n";
         Sleep(2500);
         gold = 0;
     }
     save();
 }
-void Inventory()
-{
+void Inventory() {
     char wybor;
-    while(wybor!=27)
-    {
+    while (wybor != 27) {
         system("cls");
-        cout<<"~~EKWIPUNEK~~"<<endl;
-        cout<<" BRON BIALA:"<<endl;
+        cout << "~~EKWIPUNEK~~" << endl;
+        cout << " BROŃ BIAŁA:" << endl;
         const int swordShopSize = sizeof(swordShopItems) / sizeof(swordShopItems[0]);
-        for(int i=0;i<swordShopSize;i++)
-        {
-            cout<<"     - "<<swordShopItems[i]<<" +"<<swordShopItemAmount[i]<<endl;
+        for (int i = 0; i < swordShopSize; i++) {
+            cout << "     - " << swordShopItems[i] << " +" << swordShopItemAmount[i] << endl;
         }
-        cout<<" ARMOR:"<<endl;
+        cout << " ARMOR:" << endl;
         const int armorShopSize = sizeof(armorShopItems) / sizeof(armorShopItems[0]);
-        for(int i=0;i<armorShopSize;i++)
-        {
-            cout<<"     - "<<armorShopItems[i]<<" +"<<armorShopItemAmount[i]<<endl;
+        for (int i = 0; i < armorShopSize; i++) {
+            cout << "     - " << armorShopItems[i] << " +" << armorShopItemAmount[i] << endl;
         }
-        cout<<" CONSUMABLE ITEMY:"<<endl;
-        for(int i=0;i<consumableItemsSize;i++)
-        {
-            cout<<"     - "<<consumableItems[i]<<" - "<<consumableItemsAmount[i]<<endl;
+        cout << " CONSUMABLE ITEMY:" << endl;
+        for (int i = 0; i < consumableItemsSize; i++) {
+            cout << "     - " << consumableItems[i] << " - " << consumableItemsAmount[i] << endl;
         }
-        cout<<"Aby wyjsc z ekwipunku wcisnij klawisz ESC";
-        wybor=getch();
+        cout << "Aby wyjść z ekwipunku wciśnij klawisz ESC";
+        wybor = getch();
     }
+}
+void EndGame()
+{
+    BeatGame=1;
+    system("cls");
+    system("color 8b");
+    for(int i=0;i<6;i++)
+        cout<<"."; Sleep(1000);
+    system("cls");
+    cout<<"Widzę wybrańcu, że udało ci się tego dokonać. ";
+    for(int i=0;i<6;i++)
+        cout<<"."; Sleep(1000);
+    system("cls");
+    cout<<"Bóg wybrał cię na swojego następce!";
+    for(int i=0;i<6;i++)
+        cout<<"."; Sleep(1000);
+    system("cls");
+    cout<<"W tej bardzo szczególnej chwili stałeś się osobą,\nktórej udało się przezwyciężyć najbardziej trudne wyzywania tego świata!";
+    for(int i=0;i<6;i++)
+        cout<<"."; Sleep(1000);
+    system("cls");
+    cout<<"Od teraz jesteś prawowitym władcą Koloseum Gladiatorów!!";
+    for(int i=0;i<6;i++)
+        cout<<"."; Sleep(1000);
+    system("cls");
+    for(int i=0;i<5;i++)
+        consumableItemsAmount[i]=100;
+    sekret=2;
+    dmg=dmg*3;
+    armor=armor*2;
+    gold=gold+10000;
+
 }
 void gra()
 {
     char wybor;
     while (wybor != 27)
     {
+        if(lvl==100&&BeatGame==0)
+            EndGame();
         save();
-        system("color 70");
         system("cls");
+        system("color 70");
         cout <<"Gladiator: "<<nickname<< " \t lvl: " << lvl << " gold: " << gold
-             << "  dmg: " << dmg <<"  armor: "<<armor<<"\t KLIKNIJ E, ABY WEJSC DO EKWIPUNKU" << endl<<endl;
-        cout << "ARENA "<<ArenaName[lvl/10]<<endl<<endl;
+             << "  dmg: " << dmg <<"  armor: "<<armor<<"\t KLIKNIJ E, ABY WEJŚĆ DO EKWIPUNKU" << endl<<endl;
+        if(lvl<100)
+            cout << "ARENA "<<ArenaName[lvl/10]<<endl<<endl;
+        else
+            cout << "Gdzie chcesz się udać wybrańcu?"<<endl<<endl;
         cout << "1.KOLOSEUM\n";
         cout << "2.SKLEP Z BRONIĄ BIALĄ\n";
         cout << "3.SKLEP Z ALCHEMIĄ\n";
@@ -861,7 +891,7 @@ void gra()
             cout<<"7.POMNIK LEGENDARNEGO WOJOWNIKA\n";
         }
         cout << "ESC. UCIEKNIJ (wyjście z gry)\n";
-        cout << "Twoj wybor: ";
+        cout << "Twój wybór: ";
         wybor = getch();
         switch (tolower(wybor))
         {
@@ -873,7 +903,7 @@ void gra()
             }
             case '1':
             {
-                cout << "Wchodzisz na arene";
+                cout << "Wchodzisz na arenę";
                 for (int j = 0; j < 3; j++)
                 {
                     cout << ".";
@@ -883,10 +913,10 @@ void gra()
                 srand(time(NULL));
                 const int MonsterListSize = sizeof(Monster) / sizeof(Monster[0]);
                 int n = rand() % MonsterListSize;
-                monster_lvl = rand()%lvl+lvl/2;
+                monster_lvl = rand()%lvl/2+lvl;
                 if(monster_lvl==0)
                     monster_lvl=1;
-                cout << "Walczysz z " << Monster[n] << " majacy lvl: " << monster_lvl << endl;
+                cout << "Walczysz z " << Monster[n] << " mający lvl: " << monster_lvl << endl;
                 Sleep(2000);
                 // deklaracja stat niezdefiniowanych przedtem
                 hp = lvl * 100;
@@ -944,6 +974,13 @@ void gra()
             }
             case 27:
             {
+                cout<<"Zapisywanie gry";
+                for(int i=0;i<3;i++)
+                    cout<<"."; Sleep(1000);
+                system("cls");
+                cout<<"Wychodzenie z gry";
+                for(int i=0;i<3;i++)
+                    cout<<"."; Sleep(1000);
                 return;
             }
             default:
@@ -956,11 +993,12 @@ void gra()
 void CharacterCreate()
 {
     system("cls");
-    cout<<endl<<"Jakie chcesz otrzymac atrybuty poczatkowe?\n";
+    cout<<endl<<"Jakie chcesz otrzymać atrybuty początkowe?\n";
     cout<<"\t 1. 150 golda\n";
-    cout<<"\t 2. Topor Miasta Poczatkow \n";
+    cout<<"\t 2. Topór Miasta Początków \n";
     cout<<"\t 3. Mityczny Denaturat Mirka Pierwszego \n";
     cout<<"\t 4. Legendarna Zbroja Havela \n";
+    cout<<"\t 5. 7 Helth Potionów \n";
     char wybor;
     wybor=getch();
     system("cls");
@@ -968,15 +1006,15 @@ void CharacterCreate()
     {
         case '1':
         {
-            cout<<"Jestes dzieckiem bogatych rodzicow tzw. bananem!";
-            gold=gold+150;
+            cout<<"Jesteś dzieckiem bogatych rodzicow tzw. bananem!";
+            gold=150;
             Sleep(1800);
             break;
         }
         case '2':
         {
-            cout<<"Otrzymujesz Topor Miasta Poczatkow";
-            dmg=dmg+20;
+            cout<<"Otrzymujesz Topór Miasta Poczatków";
+            dmg=90;
             Sleep(1800);
             break;
         }
@@ -989,13 +1027,20 @@ void CharacterCreate()
         }
         case '4':
         {
-            cout<<"Mityczna Zbroja Havla Przyodziewa twoje cialo!";
-            armor+=20;
+            cout<<"Mityczna Zbroja Havla przyodziewa twoje ciało!";
+            armor=30;
+            Sleep(1800);
+            break;
+        }
+        case '5':
+        {
+            cout<<"Twója magiczna aura leczenia staje się silniejsza.";
+            consumableItemsAmount[0]=7;
             Sleep(1800);
             break;
         }
         default:{
-            cout<<"Nie ma takiego atrybutu pocztkowego!";
+            cout<<"Nie ma takiego atrybutu początkowego!";
             Sleep(1800);
             break;
         }
@@ -1012,9 +1057,9 @@ void menu()
         cout << "------------MENU------------" << endl;
         cout << "----------------------------" << endl;
         cout << "---------1.NOWA GRA---------" << endl;
-        cout << "--------2.WCZYTAJ GRE-------" << endl;
+        cout << "--------2.WCZYTAJ GRĘ-------" << endl;
         cout << "-----------3.OPCJE----------" << endl;
-        cout << "-----------4.WYJDZ----------" << endl;
+        cout << "-----------4.WYJDŹ----------" << endl;
         cout << "----------------------------" << endl;
         cout << "Twoj wybor: ";
         wybor = getch();
@@ -1037,7 +1082,7 @@ void menu()
                     break;
                 else
                     gra();
-                break;
+                return;
             }
             case '3':
             {
@@ -1067,7 +1112,6 @@ void menu()
                 break;
             }
         }
-        system("cls");
     }
 }
 int main()
@@ -1077,17 +1121,17 @@ int main()
     cfi.cbSize = sizeof(cfi);
     cfi.nFont = 0;
     cfi.dwFontSize.X = 0;                   // Width of each character in the font
-    cfi.dwFontSize.Y = 24;                  // Height
+    cfi.dwFontSize.Y = 27;                  // Height
     cfi.FontFamily = FF_DONTCARE;
     cfi.FontWeight = FW_HEAVY;
-    std::wcscpy(cfi.FaceName, L"Lucida Sans Typewritter"); // Choose your font
+    std::wcscpy(cfi.FaceName, L"HoloLens MDL2 Assets *"); // Choose your font
     SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
 
     //ustawianie enkodowania w konsoli
     SetConsoleOutputCP(65001);
 
-    system("title W\243\323CZNIE I BUTY"); //https://www.ic.unicamp.br/~stolfi/EXPORT/www/ISO-8859-1-Encoding.html Ł to £ przez co nie ma ł XD chociaż £ wypisuje jako Ł
-    cout << "Włócznie i Buty" << endl; // nazwa gry do wymyslenia
+    system("title W\243\323CZNIE I BUTY"); // https://www.ic.unicamp.br/~stolfi/EXPORT/www/ISO-8859-1-Encoding.html
+    cout << "Włócznie i Buty" << endl;
     Sleep(2500);
     system("cls");
     cout << "Autorzy:" << endl;
